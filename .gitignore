@@ -1,0 +1,7 @@
+secrets.auto.tfvars
+.terraform/
+.gradle
+
+/build/
+.idea
+/out/
