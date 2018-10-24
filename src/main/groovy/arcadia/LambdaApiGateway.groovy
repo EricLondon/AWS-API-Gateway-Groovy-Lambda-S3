@@ -2,13 +2,9 @@ package arcadia
 
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.lambda.runtime.Context
-// import com.amazonaws.services.lambda.runtime.LambdaLogger
-// import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-// import com.amazonaws.services.s3.model.GetObjectRequest
 import com.xlson.groovycsv.CsvParser
-// import com.xlson.groovycsv.CsvParser.*
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
@@ -19,7 +15,7 @@ class LambdaApiGateway {
 
     try {
 
-      // debug logging
+      // debug
       context.logger.log "data: $data"
       // context.logger.log "context: $context"
       context.logger.log "data.body: ${data.body}"
@@ -29,14 +25,14 @@ class LambdaApiGateway {
       String bucket = bodyObject.bucket
       String key = bodyObject.key
 
-      // debug logging
+      // debug
       context.logger.log "bodyObject: ${bodyObject}"
       context.logger.log "bucket: ${bucket}"
       context.logger.log "key: ${key}"
 
       String fileContents = s3.getObjectAsString(bucket, key)
 
-      // debug logging
+      // debug
       context.logger.log "fileContents: ${fileContents}"
 
       if (key =~ /(?i)\.csv/) {
@@ -52,7 +48,7 @@ class LambdaApiGateway {
 
         def jsonString = JsonOutput.toJson(jsonData)
 
-        // debug logging
+        // debug
         context.logger.log "jsonString: ${jsonString}"
 
         return new HandlerResponse(statusCode:200, headers:[:], body:jsonString)
