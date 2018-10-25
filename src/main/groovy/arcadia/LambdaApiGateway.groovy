@@ -15,54 +15,81 @@ class LambdaApiGateway {
 
     try {
 
-      // debug
+      // debug logging
       context.logger.log "data: $data"
       // context.logger.log "context: $context"
       context.logger.log "data.body: ${data.body}"
 
-      def jsonSlurper = new JsonSlurper()
-      def bodyObject = jsonSlurper.parseText(data.body)
-      String bucket = bodyObject.bucket
-      String key = bodyObject.key
-
-      // debug
-      context.logger.log "bodyObject: ${bodyObject}"
-      context.logger.log "bucket: ${bucket}"
-      context.logger.log "key: ${key}"
-
-      String fileContents = s3.getObjectAsString(bucket, key)
-
-      // debug
-      context.logger.log "fileContents: ${fileContents}"
-
-      if (key =~ /(?i)\.csv/) {
-
-        def csvData = new CsvParser().parseCsv(fileContents)
-        def jsonData = csvData.collect { row ->
-          def entry = [:]
-          row.columns.each { column ->
-            entry[column.key] = row[column.key]
-          }
-          entry
-        }
-
-        def jsonString = JsonOutput.toJson(jsonData)
-
-        // debug
-        context.logger.log "jsonString: ${jsonString}"
-
-        return new HandlerResponse(statusCode:200, headers:[:], body:jsonString)
-
+      // fetch file from s3
+      if (data.path =~ /(?i)^\/s3/) {
+        return LambdaApiGateway.fetchFromS3(data.body, context)
       } else {
-        // TODO: not yet implemented
-        context.logger.log "TODO"
+        return new HandlerResponse(
+          statusCode:501,
+          headers:[:],
+          body:JsonOutput.toJson([message:"Not yet implemented"])
+        )
       }
 
     } catch(Exception error) {
-      // TODO: handle, return error status, etc
-      context.logger.log "${error}"
+      return new HandlerResponse(
+        statusCode:400,
+        headers:[:],
+        body:JsonOutput.toJson([message:error])
+      )
     }
 
+  }
+
+  static HandlerResponse fetchFromS3(body, context) {
+
+    // debug logging
+    context.logger.log "body: ${body}"
+
+    def jsonSlurper = new JsonSlurper()
+    def bodyObject = jsonSlurper.parseText(body)
+    String bucket = bodyObject.bucket
+    String key = bodyObject.key
+
+    // debug logging
+    context.logger.log "bodyObject: ${bodyObject}"
+    context.logger.log "bucket: ${bucket}"
+    context.logger.log "key: ${key}"
+
+    String fileContents = s3.getObjectAsString(bucket, key)
+
+    // debug logging
+    context.logger.log "fileContents: ${fileContents}"
+
+    if (key =~ /(?i)\.csv/) {
+
+      def csvData = new CsvParser().parseCsv(fileContents)
+      def jsonData = csvData.collect { row ->
+        def entry = [:]
+        row.columns.each { column ->
+          entry[column.key] = row[column.key]
+        }
+        entry
+      }
+
+      def jsonString = JsonOutput.toJson(jsonData)
+
+      // debug logging
+      context.logger.log "jsonString: ${jsonString}"
+
+      return new HandlerResponse(
+        statusCode:200,
+        headers:[:],
+        body:jsonString
+      )
+
+    } else {
+      return new HandlerResponse(
+        statusCode:501,
+        headers:[:],
+        body:JsonOutput.toJson([message:"Not yet implemented"])
+      )
+    }
   }
 
 }

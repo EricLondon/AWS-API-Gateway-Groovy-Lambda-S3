@@ -14,7 +14,7 @@ cd terraform
 
 # curl API Gateway endpoint
 # Example code to fetch CSV file from S3, convert to JSON, and respond
-curl -i -H 'Content-Type: application/json' -XPOST https://SOMEHASH.execute-api.us-east-1.amazonaws.com/test -d '{"bucket":"SOMEBUCKET","key":"input/sample.csv"}'
+curl -i -H 'Content-Type: application/json' -XPOST https://SOMEHASH.execute-api.us-east-1.amazonaws.com/test/s3 -d '{"bucket":"SOMEBUCKET","key":"input/sample.csv"}'
 HTTP/2 200
 content-type: application/json
 content-length: 154
