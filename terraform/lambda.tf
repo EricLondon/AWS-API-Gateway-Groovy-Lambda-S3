@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "api_gateway" {
   function_name    = "lambda_api_gateway"
   filename         = "${path.module}/../build/distributions/api-gateway-1.0-SNAPSHOT.zip"
-  handler          = "arcadia.LambdaApiGateway::handler"
+  handler          = "ericlondon.LambdaApiGateway::handler"
   runtime          = "java8"
   source_code_hash = "${base64sha256(file("${path.module}/../build/distributions/api-gateway-1.0-SNAPSHOT.zip"))}"
   role             = "${aws_iam_role.lambda_api_gateway.arn}"
