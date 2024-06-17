@@ -18,7 +18,7 @@ dependencies {
 
   compile 'org.codehaus.groovy:groovy-all:3.0.21'
   compile 'com.amazonaws:aws-lambda-java-core:1.2.3'
-  compile 'com.amazonaws:aws-java-sdk-s3:1.12.742'
+  compile 'com.amazonaws:aws-java-sdk-s3:1.12.744'
   compile 'com.xlson.groovycsv:groovycsv:1.3'
 }
 
